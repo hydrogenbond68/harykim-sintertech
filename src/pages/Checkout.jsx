@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, CheckCircle, Loader2, AlertCircle, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { toast } from 'react-toastify';
+import { formatPrice } from '../utils/format';
 
 function Checkout() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function Checkout() {
   }
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = subtotal > 50 ? 0 : 10;
+  const shipping = subtotal > 5000 ? 0 : 500;
   const tax = subtotal * 0.16;
   const total = subtotal + shipping + tax;
 
@@ -228,27 +229,27 @@ function Checkout() {
                       <h4 className="font-bold text-sm line-clamp-1">{item.name}</h4>
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                     </div>
-                    <span className="font-bold text-sm">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-bold text-sm">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
               <div className="border-t border-dashed border-gray-200 dark:border-gray-700 pt-6 space-y-3">
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Shipping Fee</span>
-                  <span className="font-semibold text-green-600">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  <span className="font-semibold text-green-600">{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Tax (VAT 16%)</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">${tax.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(tax)}</span>
                 </div>
                 <div className="border-t border-gray-100 dark:border-gray-700 mt-4 pt-4">
                   <div className="flex justify-between items-center">
                     <span className="text-xl font-bold">Total Amount</span>
-                    <span className="text-3xl font-black text-primary">${total.toFixed(2)}</span>
+                    <span className="text-3xl font-black text-primary">{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>
@@ -300,7 +301,7 @@ function Checkout() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-500">Total Amount:</span>
-                      <span className="font-bold text-gray-900 dark:text-white">${total.toFixed(2)}</span>
+                      <span className="font-bold text-gray-900 dark:text-white">{formatPrice(total)}</span>
                     </div>
                   </div>
 

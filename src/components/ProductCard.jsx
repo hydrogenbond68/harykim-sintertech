@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
+import { formatPrice } from '../utils/format';
+
 function ProductCard({ product }) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const isWishlisted = wishlist.some(item => item.id === product.id);
@@ -49,9 +51,9 @@ function ProductCard({ product }) {
 
         <div className="flex items-center justify-between mb-3">
           <div>
-            <span className="text-xl font-bold text-primary">${product.price}</span>
+            <span className="text-xl font-bold text-primary">{formatPrice(product.price)}</span>
             {product.originalPrice && (
-              <span className="text-sm text-gray-400 line-through ml-2">${product.originalPrice}</span>
+              <span className="text-sm text-gray-400 line-through ml-2">{formatPrice(product.originalPrice)}</span>
             )}
           </div>
         </div>

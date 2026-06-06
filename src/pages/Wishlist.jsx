@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { formatPrice } from '../utils/format';
 
 function Wishlist() {
   const { wishlist, toggleWishlist, addToCart } = useApp();
@@ -37,9 +38,9 @@ function Wishlist() {
                 </Link>
                 <p className="text-sm text-gray-500 mb-2">{product.brand}</p>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xl font-bold text-primary">${product.price}</span>
+                  <span className="text-xl font-bold text-primary">{formatPrice(product.price)}</span>
                   {product.originalPrice && (
-                    <span className="text-sm text-gray-400 line-through">${product.originalPrice}</span>
+                    <span className="text-sm text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
                   )}
                 </div>
                 <div className="flex gap-2">

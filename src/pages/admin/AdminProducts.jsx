@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Trash2, X, Search } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { formatPrice } from '../../utils/format';
 
 function AdminProducts() {
   const { products, categories, brands, addProduct, updateProduct, deleteProduct } = useApp();
@@ -132,7 +133,7 @@ function AdminProducts() {
                     </td>
                     <td className="py-3 px-4">{product.brand}</td>
                     <td className="py-3 px-4">{product.category}</td>
-                    <td className="py-3 px-4">${product.price}</td>
+                    <td className="py-3 px-4">{formatPrice(product.price)}</td>
                     <td className="py-3 px-4">
                       <span className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
                         {product.stock}
@@ -231,7 +232,7 @@ function AdminProducts() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Price ($)</label>
+                  <label className="block text-sm font-medium mb-1">Price (Ksh)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -242,7 +243,7 @@ function AdminProducts() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Original Price ($)</label>
+                  <label className="block text-sm font-medium mb-1">Original Price (Ksh)</label>
                   <input
                     type="number"
                     step="0.01"

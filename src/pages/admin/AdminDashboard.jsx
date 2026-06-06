@@ -1,7 +1,8 @@
 // src/pages/admin/AdminDashboard.jsx
 import { motion } from 'framer-motion';
-import { Users, Package, ShoppingCart, Star, DollarSign, TrendingUp } from 'lucide-react';
+import { Users, Package, ShoppingCart, Star, Banknote, TrendingUp } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { formatPrice } from '../../utils/format';
 
 function AdminDashboard() {
   const { products, users, orders, reviews } = useApp();
@@ -48,17 +49,17 @@ function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
-            <DollarSign className="text-primary" size={24} />
+            <Banknote className="text-primary" size={24} />
             <h2 className="text-xl font-semibold">Revenue Statistics</h2>
           </div>
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-500">Total Revenue</span>
-              <span className="font-bold text-xl text-primary">${totalRevenue.toFixed(2)}</span>
+              <span className="font-bold text-xl text-primary">{formatPrice(totalRevenue)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Average Order Value</span>
-              <span className="font-semibold">${averageOrderValue.toFixed(2)}</span>
+              <span className="font-semibold">{formatPrice(averageOrderValue)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Total Orders</span>
@@ -112,7 +113,7 @@ function AdminDashboard() {
                     <td className="py-3 font-mono text-sm">{order.id}</td>
                     <td className="py-3">{order.fullName}</td>
                     <td className="py-3 text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
-                    <td className="py-3 font-semibold">${order.total.toFixed(2)}</td>
+                    <td className="py-3 font-semibold">{formatPrice(order.total)}</td>
                     <td className="py-3">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :

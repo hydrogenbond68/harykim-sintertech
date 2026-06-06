@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { User, Package, Heart, Settings, LogOut, Edit2, Check } from 'lucide-react';
+import { formatPrice } from '../utils/format';
 
 function UserDashboard() {
   const { user, orders, wishlist, logout, updateProfile } = useApp();
@@ -179,7 +180,7 @@ function UserDashboard() {
                             {order.items.slice(0, 2).map(item => (
                               <div key={item.id} className="flex justify-between text-sm">
                                 <span>{item.name} x {item.quantity}</span>
-                                <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                <span>{formatPrice(item.price * item.quantity)}</span>
                               </div>
                             ))}
                             {order.items.length > 2 && (
@@ -188,7 +189,7 @@ function UserDashboard() {
                           </div>
                           <div className="border-t mt-3 pt-3 flex justify-between font-semibold">
                             <span>Total</span>
-                            <span className="text-primary">${order.total.toFixed(2)}</span>
+                            <span className="text-primary">{formatPrice(order.total)}</span>
                           </div>
                         </div>
                       ))}
@@ -211,7 +212,7 @@ function UserDashboard() {
                           <div className="flex-1">
                             <h3 className="font-semibold">{product.name}</h3>
                             <p className="text-sm text-gray-500">{product.brand}</p>
-                            <p className="text-primary font-bold">${product.price}</p>
+                            <p className="text-primary font-bold">{formatPrice(product.price)}</p>
                           </div>
                         </div>
                       ))}

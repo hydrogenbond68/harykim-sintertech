@@ -5,6 +5,7 @@ import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus } from
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import { toast } from 'react-toastify';
+import { formatPrice } from '../utils/format';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -111,10 +112,10 @@ function ProductDetails() {
               </div>
 
               <div className="mb-4">
-                <span className="text-3xl font-bold text-primary">${product.price}</span>
+                <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}</span>
                 {product.originalPrice && (
                   <>
-                    <span className="text-lg text-gray-400 line-through ml-2">${product.originalPrice}</span>
+                    <span className="text-lg text-gray-400 line-through ml-2">{formatPrice(product.originalPrice)}</span>
                     <span className="ml-2 bg-accent text-white px-2 py-1 rounded-md text-sm">-{product.discount}%</span>
                   </>
                 )}
@@ -178,7 +179,7 @@ function ProductDetails() {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <Truck size={16} />
-                  <span>Free shipping on orders over $50</span>
+                  <span>Free shipping on orders over {formatPrice(5000)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <Shield size={16} />
