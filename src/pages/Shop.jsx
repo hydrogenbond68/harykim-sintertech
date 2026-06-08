@@ -3,12 +3,12 @@ import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, ChevronDown } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
 
 function Shop() {
   const [searchParams] = useSearchParams();
-  const { products, categories } = useApp();
+  const { products, categories } = useStore();
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
@@ -72,7 +72,7 @@ function Shop() {
     setSearchTerm('');
     setSelectedCategory('');
     setSelectedBrand('');
-    setPriceRange({ min: 0, max: 5000 });
+    setPriceRange({ min: 0, max: 500000 });
     setShowStockOnly(false);
     setSortBy('featured');
   };

@@ -1,11 +1,11 @@
 // src/pages/admin/AdminReviews.jsx
 import { useState } from 'react';
 import { Search, Star, Trash2, CheckCircle } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useStore } from '../../context/StoreContext';
 import { toast } from 'react-toastify';
 
 function AdminReviews() {
-  const { reviews, products, deleteReview, dispatch } = useApp();
+  const { reviews, products, deleteReview, dispatch } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   const getProductName = (productId) => {

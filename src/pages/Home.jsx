@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
 import TestimonialCard from '../components/TestimonialCard';
 import Newsletter from '../components/Newsletter';
@@ -20,7 +20,7 @@ const testimonials = [
 ];
 
 function Home() {
-  const { products } = useApp();
+  const { products } = useStore();
   
   const bestSellers = products.filter(p => p.isBestSeller).slice(0, 4);
   const newArrivals = products.filter(p => p.isNew).slice(0, 4);

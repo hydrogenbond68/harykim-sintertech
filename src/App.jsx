@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AppProvider } from './context/AppContext';
+import { StoreProvider } from './context/StoreContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 // Layouts
@@ -20,6 +20,7 @@ import Wishlist from './pages/Wishlist';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import UserDashboard from './pages/UserDashboard';
+import About from './pages/About';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -39,7 +40,7 @@ const ScrollToTop = ({ children }) => {
 function App() {
   return (
     <ThemeProvider>
-      <AppProvider>
+      <StoreProvider>
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -86,9 +87,14 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="dashboard" element={<UserDashboard />} />
+            <Route path="about" element={
+              <ScrollToTop>
+                <About />
+              </ScrollToTop>
+            } />
           </Route>
         </Routes>
-      </AppProvider>
+      </StoreProvider>
     </ThemeProvider>
   );
 }

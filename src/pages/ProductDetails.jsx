@@ -2,15 +2,15 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 import ProductCard from '../components/ProductCard';
 import { toast } from 'react-toastify';
-import { formatPrice } from '../utils/format';
+import { formatPrice } from '../utils/formatters';
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, addToCart, toggleWishlist, wishlist, addReview, reviews: allReviews } = useApp();
+  const { products, addToCart, toggleWishlist, wishlist, addReview, reviews: allReviews } = useStore();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [reviewText, setReviewText] = useState('');
@@ -33,9 +33,7 @@ function ProductDetails() {
   }
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    addToCart(product, quantity);
   };
 
   const handleSubmitReview = (e) => {

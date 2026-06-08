@@ -1,11 +1,11 @@
 // src/pages/Wishlist.jsx
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { formatPrice } from '../utils/format';
+import { useStore } from '../context/StoreContext';
+import { formatPrice } from '../utils/formatters';
 
 function Wishlist() {
-  const { wishlist, toggleWishlist, addToCart } = useApp();
+  const { wishlist, toggleWishlist, addToCart } = useStore();
 
   if (wishlist.length === 0) {
     return (

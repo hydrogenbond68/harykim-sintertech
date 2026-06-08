@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, LogIn } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 
 function Login() {
   const navigate = useNavigate();
-  const { login } = useApp();
+  const { login } = useStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -89,7 +89,7 @@ function Login() {
             </Link>
           </p>
           <p className="text-xs text-gray-400 mt-4">
-            Demo credentials: john@example.com / password123 (admin) or jane@example.com / password123 (user)
+            Demo credentials: hkintertech22@gmail.com / admin123 (admin) or user@example.com / user123 (user)
           </p>
         </div>
       </motion.div>

@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, CheckCircle, Loader2, AlertCircle, ShieldCheck, ArrowRight } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 import { toast } from 'react-toastify';
-import { formatPrice } from '../utils/format';
+import { formatPrice } from '../utils/formatters';
 
 function Checkout() {
   const navigate = useNavigate();
-  const { cart, placeOrder, user } = useApp();
+  const { cart, placeOrder, user } = useStore();
   
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentState, setPaymentState] = useState('idle'); // idle, initiating, waiting, success, error

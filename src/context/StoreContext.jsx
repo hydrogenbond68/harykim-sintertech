@@ -1,9 +1,9 @@
-// src/context/AppContext.jsx - COMPLETE WORKING VERSION
+// src/context/StoreContext.jsx
 import { createContext, useContext, useReducer, useEffect } from 'react';
-import { mockProducts, mockCategories, mockBrands, mockUsers, mockReviews } from '../data/mockData';
+import { mockProducts, mockCategories, mockBrands, mockUsers, mockReviews } from '../data/productsData';
 import { toast } from 'react-toastify';
 
-const AppContext = createContext();
+const StoreContext = createContext();
 
 const initialState = {
   products: [],
@@ -136,7 +136,7 @@ function appReducer(state, action) {
   }
 }
 
-export function AppProvider({ children }) {
+export function StoreProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   // Load data from localStorage on mount
@@ -182,9 +182,9 @@ export function AppProvider({ children }) {
     localStorage.setItem('users', JSON.stringify(state.users));
   }, [state.cart, state.wishlist, state.user, state.orders, state.users]);
 
-  const addToCart = (product) => {
-    dispatch({ type: 'ADD_TO_CART', payload: product });
-    toast.success('Added to cart!');
+  const addToCart = (product, quantity = 1) => {
+    dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
+    toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart!`);
   };
 
   const removeFromCart = (productId) => {
@@ -289,7 +289,7 @@ export function AppProvider({ children }) {
   };
 
   return (
-    <AppContext.Provider
+    <StoreContext.Provider
       value={{
         ...state,
         addToCart,
@@ -310,15 +310,15 @@ export function AppProvider({ children }) {
       }}
     >
       {children}
-    </AppContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useApp() {
-  const context = useContext(AppContext);
+export function useStore() {
+  const context = useContext(StoreContext);
   if (!context) {
-    throw new Error('useApp must be used within AppProvider');
+    throw new Error('useStore must be used within StoreProvider');
   }
   return context;
 }

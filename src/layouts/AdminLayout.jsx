@@ -11,13 +11,17 @@ import {
   LogOut,
   Menu,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Moon,
+  Sun
 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
+import { useTheme } from '../context/ThemeContext';
 
 function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { user, logout } = useApp();
+  const { user, logout } = useStore();
+  const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -100,9 +104,18 @@ function AdminLayout() {
             >
               <Menu size={24} />
             </button>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600 dark:text-gray-300">Welcome, {user.name}</span>
-              <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={toggleDarkMode} 
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                title="Toggle Mode"
+              >
+                {darkMode ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-gray-400" />}
+              </button>
+              <div className="flex items-center gap-3 border-l pl-4 dark:border-gray-700">
+                <span className="text-sm text-gray-600 dark:text-gray-300 hidden sm:inline">Welcome, {user.name}</span>
+                <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600" />
+              </div>
             </div>
           </div>
         </header>

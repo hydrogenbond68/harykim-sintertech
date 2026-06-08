@@ -1,11 +1,11 @@
 // src/pages/admin/AdminOrders.jsx
 import { useState } from 'react';
 import { Search, Package, CheckCircle } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useStore } from '../../context/StoreContext';
 import { toast } from 'react-toastify';
 
 function AdminOrders() {
-  const { orders, dispatch } = useApp();
+  const { orders, dispatch } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 

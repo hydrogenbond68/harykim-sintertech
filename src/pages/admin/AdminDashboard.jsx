@@ -1,11 +1,11 @@
 // src/pages/admin/AdminDashboard.jsx
 import { motion } from 'framer-motion';
 import { Users, Package, ShoppingCart, Star, Banknote, TrendingUp } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { formatPrice } from '../../utils/format';
+import { useStore } from '../../context/StoreContext';
+import { formatPrice } from '../../utils/formatters';
 
 function AdminDashboard() {
-  const { products, users, orders, reviews } = useApp();
+  const { products, users, orders, reviews } = useStore();
 
   const stats = [
     { title: 'Total Users', value: users.length, icon: Users, color: 'bg-blue-500' },

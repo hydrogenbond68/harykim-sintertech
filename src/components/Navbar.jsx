@@ -3,19 +3,23 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Heart, Menu, X, Moon, Sun, Search } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 import { useTheme } from '../context/ThemeContext';
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { cart, wishlist, user } = useApp();
+  const { cart, wishlist, user } = useStore();
   const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlist.length;
+
+  const whatsappNumber = "+254118477340";
+  const whatsappMessage = encodeURIComponent("Hello, I have an enquiry about your products.");
+  const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${whatsappMessage}`;
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -39,45 +43,51 @@ function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
-              <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">Home</Link>
-              <Link to="/shop" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">Shop</Link>
-              {user && <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">Dashboard</Link>}
-              {user?.role === 'admin' && <Link to="/admin" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">Admin</Link>}
+              <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-primary transition font-medium">Home</Link>
+              <Link to="/shop" className="text-gray-700 dark:text-gray-300 hover:text-primary transition font-medium">Shop</Link>
+              <Link to="/about" className="text-gray-700 dark:text-gray-300 hover:text-primary transition font-medium">About Us</Link>
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-300 hover:text-primary transition font-medium">Contact Us</a>
+              {user && <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-primary transition font-medium">Dashboard</Link>}
+              {user?.role === 'admin' && <Link to="/admin" className="text-gray-700 dark:text-gray-300 hover:text-primary transition font-medium">Admin</Link>}
             </div>
 
             {/* Desktop Icons */}
             <div className="hidden md:flex items-center space-x-4">
-              <button onClick={() => setSearchOpen(true)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+              <button onClick={() => setSearchOpen(true)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <Search size={20} />
               </button>
-              <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-              <Link to="/wishlist" className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+              
+              <Link to="/wishlist" className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <Heart size={20} />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                     {wishlistCount}
                   </span>
                 )}
               </Link>
-              <Link to="/cart" className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+              <Link to="/cart" className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                     {cartCount}
                   </span>
                 )}
               </Link>
-              {user ? (
-                <Link to="/dashboard" className="flex items-center space-x-2">
-                  <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
-                </Link>
-              ) : (
-                <Link to="/login" className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
-                  Login
-                </Link>
-              )}
+
+              <div className="flex items-center space-x-2 border-l pl-4 dark:border-gray-700">
+                <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Toggle Mode">
+                  {darkMode ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-gray-600" />}
+                </button>
+                {user ? (
+                  <Link to="/dashboard" className="flex items-center space-x-2">
+                    <img src={user.avatar} alt={user.name} className="w-9 h-9 rounded-full border-2 border-primary" />
+                  </Link>
+                ) : (
+                  <Link to="/login" className="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition shadow-sm font-semibold">
+                    Login
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -97,26 +107,30 @@ function Navbar() {
               className="md:hidden bg-white dark:bg-gray-900 border-t"
             >
               <div className="container mx-auto px-4 py-4 flex flex-col space-y-3">
-                <Link to="/" className="py-2 text-gray-700 dark:text-gray-300" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-                <Link to="/shop" className="py-2 text-gray-700 dark:text-gray-300" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
-                {user && <Link to="/dashboard" className="py-2 text-gray-700 dark:text-gray-300" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>}
-                {user?.role === 'admin' && <Link to="/admin" className="py-2 text-gray-700 dark:text-gray-300" onClick={() => setMobileMenuOpen(false)}>Admin</Link>}
-                <div className="flex items-center space-x-4 pt-2 border-t">
-                  <Link to="/wishlist" className="flex items-center space-x-2 py-2">
-                    <Heart size={20} />
-                    <span>Wishlist ({wishlistCount})</span>
-                  </Link>
-                  <Link to="/cart" className="flex items-center space-x-2 py-2">
-                    <ShoppingCart size={20} />
-                    <span>Cart ({cartCount})</span>
-                  </Link>
-                  <button onClick={toggleDarkMode} className="flex items-center space-x-2 py-2">
-                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                    <span>{darkMode ? 'Light' : 'Dark'}</span>
+                <Link to="/" className="py-2 text-gray-700 dark:text-gray-300 font-medium border-b dark:border-gray-800" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+                <Link to="/shop" className="py-2 text-gray-700 dark:text-gray-300 font-medium border-b dark:border-gray-800" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
+                <Link to="/about" className="py-2 text-gray-700 dark:text-gray-300 font-medium border-b dark:border-gray-800" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
+                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="py-2 text-gray-700 dark:text-gray-300 font-medium border-b dark:border-gray-800" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
+                {user && <Link to="/dashboard" className="py-2 text-gray-700 dark:text-gray-300 font-medium border-b dark:border-gray-800" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>}
+                {user?.role === 'admin' && <Link to="/admin" className="py-2 text-gray-700 dark:text-gray-300 font-medium border-b dark:border-gray-800" onClick={() => setMobileMenuOpen(false)}>Admin</Link>}
+                <div className="flex items-center justify-between pt-4">
+                  <div className="flex space-x-4">
+                    <Link to="/wishlist" className="relative p-2" onClick={() => setMobileMenuOpen(false)}>
+                      <Heart size={24} />
+                      {wishlistCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">{wishlistCount}</span>}
+                    </Link>
+                    <Link to="/cart" className="relative p-2" onClick={() => setMobileMenuOpen(false)}>
+                      <ShoppingCart size={24} />
+                      {cartCount > 0 && <span className="absolute top-0 right-0 bg-primary text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">{cartCount}</span>}
+                    </Link>
+                  </div>
+                  <button onClick={toggleDarkMode} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
+                    {darkMode ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-gray-600" />}
+                    <span className="font-medium">{darkMode ? 'Light' : 'Dark'} Mode</span>
                   </button>
                 </div>
                 {!user && (
-                  <Link to="/login" className="bg-primary text-white px-4 py-2 rounded-lg text-center" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/login" className="bg-primary text-white px-4 py-3 rounded-lg text-center font-bold shadow-lg" onClick={() => setMobileMenuOpen(false)}>
                     Login
                   </Link>
                 )}

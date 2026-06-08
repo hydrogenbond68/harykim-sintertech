@@ -2,11 +2,11 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { formatPrice } from '../utils/format';
+import { useStore } from '../context/StoreContext';
+import { formatPrice } from '../utils/formatters';
 
 function Cart() {
-  const { cart, removeFromCart, updateQuantity } = useApp();
+  const { cart, removeFromCart, updateQuantity } = useStore();
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = subtotal > 5000 ? 0 : 500;

@@ -1,11 +1,11 @@
 // src/pages/admin/AdminUsers.jsx
 import { useState } from 'react';
 import { Search, Shield, UserX } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useStore } from '../../context/StoreContext';
 import { toast } from 'react-toastify';
 
 function AdminUsers() {
-  const { users, dispatch } = useApp();
+  const { users, dispatch } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredUsers = users.filter(u =>

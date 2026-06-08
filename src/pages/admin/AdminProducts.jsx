@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Trash2, X, Search } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { formatPrice } from '../../utils/format';
+import { useStore } from '../../context/StoreContext';
+import { formatPrice } from '../../utils/formatters';
 
 function AdminProducts() {
-  const { products, categories, brands, addProduct, updateProduct, deleteProduct } = useApp();
+  const { products, categories, brands, addProduct, updateProduct, deleteProduct } = useStore();
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');

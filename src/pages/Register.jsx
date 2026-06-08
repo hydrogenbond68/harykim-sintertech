@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Phone, MapPin } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 
 function Register() {
   const navigate = useNavigate();
-  const { register } = useApp();
+  const { register } = useStore();
   const [formData, setFormData] = useState({
     name: '',
     email: '',

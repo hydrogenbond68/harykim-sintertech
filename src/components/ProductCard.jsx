@@ -2,12 +2,12 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useStore } from '../context/StoreContext';
 
-import { formatPrice } from '../utils/format';
+import { formatPrice } from '../utils/formatters';
 
 function ProductCard({ product }) {
-  const { addToCart, toggleWishlist, wishlist } = useApp();
+  const { addToCart, toggleWishlist, wishlist } = useStore();
   const isWishlisted = wishlist.some(item => item.id === product.id);
 
   return (

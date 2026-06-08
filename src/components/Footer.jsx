@@ -11,7 +11,7 @@ function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="text-xl font-bold mb-4">Harykim's Intertech</h3>
-            <p className="text-gray-400 mb-4">Your trusted technology partner since 2024. Quality products, best prices, excellent service.</p>
+            <p className="text-gray-400 mb-4">Your trusted technology partner since 2026. Quality products, best prices, excellent service.</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-primary transition">
                 <FaFacebook size={20} />
@@ -34,8 +34,8 @@ function Footer() {
             <ul className="space-y-2">
               <li><Link to="/" className="text-gray-400 hover:text-primary transition">Home</Link></li>
               <li><Link to="/shop" className="text-gray-400 hover:text-primary transition">Shop</Link></li>
-              <li><Link to="/" className="text-gray-400 hover:text-primary transition">About Us</Link></li>
-              <li><Link to="/" className="text-gray-400 hover:text-primary transition">Contact</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-primary transition">About Us</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-primary transition">Contact</Link></li>
             </ul>
           </div>
 
@@ -60,18 +60,18 @@ function Footer() {
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <Phone size={18} />
-                <span>+254 700 000 000</span>
+                <span>+254 118 477 340</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400">
                 <Mail size={18} />
-                <span>info@harykim.com</span>
+                <span>info@harykimintertech.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Harykim's Intertech. All rights reserved.</p>
+          <p>&copy; 2026 Harykim's Intertech. All rights reserved.</p>
         </div>
       </div>
     </footer>
