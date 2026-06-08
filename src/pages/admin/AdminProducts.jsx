@@ -1,7 +1,7 @@
 // src/pages/admin/AdminProducts.jsx
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, X, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Search, Upload, Image as ImageIcon } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { formatPrice } from '../../utils/formatters';
 
@@ -10,6 +10,7 @@ function AdminProducts() {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -19,7 +20,7 @@ function AdminProducts() {
     description: '',
     stock: '',
     rating: 4.5,
-    images: ['https://picsum.photos/500/500'],
+    images: ['', '', '', ''], // Ensure 4 slots
     specs: {},
   });
 
@@ -31,7 +32,10 @@ function AdminProducts() {
   const handleOpenModal = (product = null) => {
     if (product) {
       setEditingProduct(product);
-      setFormData(product);
+      // Ensure there are at least 4 image slots
+      const paddedImages = [...product.images];
+      while (paddedImages.length < 4) paddedImages.push('');
+      setFormData({ ...product, images: paddedImages });
     } else {
       setEditingProduct(null);
       setFormData({
@@ -43,21 +47,38 @@ function AdminProducts() {
         description: '',
         stock: '',
         rating: 4.5,
-        images: ['https://picsum.photos/500/500'],
+        images: ['', '', '', ''],
         specs: {},
       });
     }
     setShowModal(true);
   };
 
+  const handleFileUpload = (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newImages = [...formData.images];
+        newImages[index] = reader.result;
+        setFormData({ ...formData, images: newImages });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Filter out empty image slots
+    const finalImages = formData.images.filter(img => img !== '');
+    
     const productData = {
       ...formData,
+      images: finalImages.length > 0 ? finalImages : ['https://picsum.photos/500/500'],
       price: parseFloat(formData.price),
-      originalPrice: parseFloat(formData.originalPrice),
+      originalPrice: parseFloat(formData.originalPrice) || 0,
       stock: parseInt(formData.stock),
-      id: editingProduct?.id,
+      id: editingProduct?.id || Date.now(),
     };
     
     if (editingProduct) {
@@ -185,7 +206,7 @@ function AdminProducts() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     required
                   />
                 </div>
@@ -194,7 +215,7 @@ function AdminProducts() {
                   <select
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     required
                   >
                     <option value="">Select Brand</option>
@@ -210,7 +231,7 @@ function AdminProducts() {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     required
                   >
                     <option value="">Select Category</option>
@@ -225,7 +246,7 @@ function AdminProducts() {
                     type="number"
                     value={formData.stock}
                     onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     required
                   />
                 </div>
@@ -238,7 +259,7 @@ function AdminProducts() {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     required
                   />
                 </div>
@@ -249,7 +270,7 @@ function AdminProducts() {
                     step="0.01"
                     value={formData.originalPrice}
                     onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
               </div>
@@ -259,18 +280,63 @@ function AdminProducts() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows="3"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Image URL</label>
-                <input
-                  type="text"
-                  value={formData.images[0]}
-                  onChange={(e) => setFormData({ ...formData, images: [e.target.value] })}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
-                />
+                <label className="block text-sm font-medium mb-2">Product Images (4 different views)</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[0, 1, 2, 3].map((index) => (
+                    <div key={index} className="space-y-2">
+                      <div 
+                        className="aspect-square w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden relative group"
+                        onClick={() => document.getElementById(`file-upload-${index}`).click()}
+                      >
+                        {formData.images[index] ? (
+                          <>
+                            <img 
+                              src={formData.images[index]} 
+                              alt={`View ${index + 1}`} 
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Upload className="text-white" size={24} />
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <ImageIcon className="text-gray-400 mb-2" size={24} />
+                            <span className="text-[10px] text-gray-500 uppercase font-bold text-center px-1">
+                              {index === 0 ? 'Front View' : index === 1 ? 'Side View' : index === 2 ? 'Back View' : 'Action View'}
+                            </span>
+                          </>
+                        )}
+                        <input
+                          id={`file-upload-${index}`}
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => handleFileUpload(e, index)}
+                        />
+                      </div>
+                      {formData.images[index] && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newImages = [...formData.images];
+                            newImages[index] = '';
+                            setFormData({ ...formData, images: newImages });
+                          }}
+                          className="w-full text-xs text-red-500 hover:underline flex items-center justify-center gap-1"
+                        >
+                          <Trash2 size={12} /> Remove
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Upload images from your device. Recommended size: 800x800px.</p>
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button

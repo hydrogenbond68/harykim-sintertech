@@ -42,7 +42,7 @@ function AdminReviews() {
             placeholder="Search reviews..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
         </div>
       </div>
