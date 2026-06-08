@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { useTheme } from '../context/ThemeContext';
-import { User, Package, Heart, Settings, LogOut, Edit2, Check } from 'lucide-react';
+import { User, Package, Heart, Settings, LogOut, Edit2, Check, Camera, Trash2 } from 'lucide-react';
 import { formatPrice } from '../utils/formatters';
+import { toast } from 'react-toastify';
 
 function UserDashboard() {
   const { user, orders, wishlist, logout, updateProfile } = useStore();
@@ -17,6 +18,26 @@ function UserDashboard() {
     phone: user?.phone || '',
     address: user?.address || '',
   });
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image size must be less than 2MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateProfile({ avatar: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    updateProfile({ avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random` });
+    toast.info('Profile photo removed');
+  };
 
   const handleProfileUpdate = () => {
     updateProfile(profileData);
@@ -42,7 +63,20 @@ function UserDashboard() {
           <div className="lg:w-80">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 sticky top-24">
               <div className="text-center mb-6">
-                <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full mx-auto mb-3" />
+                <div className="relative inline-block group">
+                  <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-2 border-primary" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-2">
+                      <label className="p-2 bg-primary text-white rounded-full cursor-pointer hover:scale-110 transition-transform shadow-lg" title="Upload Photo">
+                        <Camera size={16} />
+                        <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                      </label>
+                      <button onClick={removePhoto} className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform shadow-lg" title="Remove Photo">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
                 <h2 className="text-xl font-bold">{user.name}</h2>
                 <p className="text-gray-500 text-sm">{user.email}</p>
               </div>

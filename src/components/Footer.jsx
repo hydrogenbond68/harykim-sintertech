@@ -1,7 +1,7 @@
 // src/components/Footer.jsx - FIXED with correct icon names
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaTiktok } from 'react-icons/fa6';
 
 function Footer() {
   return (
@@ -13,16 +13,19 @@ function Footer() {
             <h3 className="text-xl font-bold mb-4">Harykim's Intertech</h3>
             <p className="text-gray-400 mb-4">Your trusted technology partner since 2026. Quality products, best prices, excellent service.</p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary transition">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition">
                 <FaFacebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition">
                 <FaXTwitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition">
                 <FaInstagram size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition">
+              <a href="https://tiktok.com/@harykimsintertech" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition">
+                <FaTiktok size={20} />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition">
                 <FaLinkedin size={20} />
               </a>
             </div>

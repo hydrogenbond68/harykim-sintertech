@@ -13,7 +13,7 @@ export const mockBrands = [
 ];
 
 export const mockUsers = [
-  { id: 1, name: 'HK Admin', email: 'hkintertech22@gmail.com', password: 'admin123', role: 'admin', avatar: 'https://randomuser.me/api/portraits/men/10.jpg', phone: '+254712345678', address: 'Nairobi, Kenya' },
+  { id: 1, name: 'Hary Kims', email: 'hkintertech22@gmail.com', password: 'admin123', role: 'admin', avatar: 'https://randomuser.me/api/portraits/men/10.jpg', phone: '+254712345678', address: 'Nairobi, Kenya' },
   { id: 2, name: 'Regular User', email: 'user@example.com', password: 'user123', role: 'user', avatar: 'https://randomuser.me/api/portraits/women/1.jpg', phone: '+254723456789', address: 'Mombasa, Kenya' },
 ];
 
@@ -162,10 +162,10 @@ const baseProducts = [
     discount: 16,
     description: 'Connect with superior clarity every time you go live on channels like Twitch and YouTube. Stream anything you want in your choice of Full 1080p at 30fps or hyperfast HD 720p at 60fps. The glass lens and 78-degree field of view capture every detail in bright, natural colors, while the dual microphones capture natural sound from every angle.',
     images: [
+      'https://images.unsplash.com/photo-1626961202005-7f300958189c?w=500',
       'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=500',
       'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500',
-      'https://images.unsplash.com/photo-1626961202005-7f300958189c?w=500',
-      'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500'
+      'https://images.unsplash.com/photo-1515343483479-4453509ac000?w=500'
     ],
     specs: {
       resolution: '1080p/30fps - 720p/60fps',
@@ -187,10 +187,10 @@ const baseProducts = [
     discount: 24,
     description: 'The ultimate SSD. Reach max performance with PCIe 4.0. Experience long-lasting, industry-leading speed. The smart heat control of the internal controller delivers supreme power efficiency while maintaining ferocious speed and performance, to always keep you at the top of your game.',
     images: [
-      'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500',
       'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=500',
+      'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=500',
       'https://images.unsplash.com/photo-1531492746076-1a1bd9b29fcb?w=500',
-      'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=500'
+      'https://images.unsplash.com/photo-1555617766-c94804975da3?w=500'
     ],
     specs: {
       capacity: '2TB',

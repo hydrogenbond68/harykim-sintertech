@@ -37,8 +37,11 @@ function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-primary">Harykim's</span>
-              <span className="text-xl font-semibold text-secondary dark:text-white">Intertech</span>
+              <img src="/logo.png" alt="Harykim's Intertech" className="h-10 w-10 rounded-full object-cover border-2 border-primary" />
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-primary leading-tight">Harykim's</span>
+                <span className="text-sm font-semibold text-secondary dark:text-white leading-tight">Intertech</span>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -75,8 +78,12 @@ function Navbar() {
               </Link>
 
               <div className="flex items-center space-x-2 border-l pl-4 dark:border-gray-700">
-                <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="Toggle Mode">
-                  {darkMode ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-gray-600" />}
+                <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300" title="Toggle Mode">
+                  {darkMode ? (
+                    <Moon size={20} className="text-blue-400 fill-blue-400/20" />
+                  ) : (
+                    <Sun size={20} className="text-yellow-500 fill-yellow-500/20" />
+                  )}
                 </button>
                 {user ? (
                   <Link to="/dashboard" className="flex items-center space-x-2">
@@ -125,8 +132,12 @@ function Navbar() {
                     </Link>
                   </div>
                   <button onClick={toggleDarkMode} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
-                    {darkMode ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-gray-600" />}
-                    <span className="font-medium">{darkMode ? 'Light' : 'Dark'} Mode</span>
+                    {darkMode ? (
+                      <Moon size={20} className="text-blue-400" />
+                    ) : (
+                      <Sun size={20} className="text-yellow-500" />
+                    )}
+                    <span className="font-medium">{darkMode ? 'Dark' : 'Light'} Mode</span>
                   </button>
                 </div>
                 {!user && (

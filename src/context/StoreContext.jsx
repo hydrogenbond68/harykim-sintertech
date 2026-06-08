@@ -202,7 +202,9 @@ export function StoreProvider({ children }) {
   };
 
   const login = (email, password) => {
-    const user = state.users.find(u => u.email === email && u.password === password);
+    // Check in the current users state (which includes mock data and new registrations)
+    const user = state.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+    
     if (user) {
       // eslint-disable-next-line no-unused-vars
       const { password: _, ...userWithoutPassword } = user;
@@ -210,7 +212,7 @@ export function StoreProvider({ children }) {
       toast.success(`Welcome back, ${userWithoutPassword.name}!`);
       return true;
     }
-    toast.error('Invalid credentials');
+    toast.error('Invalid email or password');
     return false;
   };
 
@@ -222,9 +224,16 @@ export function StoreProvider({ children }) {
       avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`,
       createdAt: new Date().toISOString(),
     };
+    
+    // Check if user already exists
+    if (state.users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
+      toast.error('Email already registered');
+      return false;
+    }
+
     dispatch({ type: 'ADD_USER', payload: newUser });
     // eslint-disable-next-line no-unused-vars
-    const { password, ...userWithoutPassword } = newUser;
+    const { password: _, ...userWithoutPassword } = newUser;
     dispatch({ type: 'SET_USER', payload: userWithoutPassword });
     toast.success('Registration successful!');
     return true;
@@ -232,6 +241,7 @@ export function StoreProvider({ children }) {
 
   const logout = () => {
     dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('user'); // Explicitly remove from storage
     toast.info('Logged out successfully');
   };
 

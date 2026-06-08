@@ -13,7 +13,7 @@ function Shop() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
   const [selectedBrand, setSelectedBrand] = useState('');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [showStockOnly, setShowStockOnly] = useState(false);
@@ -72,7 +72,7 @@ function Shop() {
     setSearchTerm('');
     setSelectedCategory('');
     setSelectedBrand('');
-    setPriceRange({ min: 0, max: 500000 });
+    setPriceRange({ min: 0, max: 1000000 });
     setShowStockOnly(false);
     setSortBy('featured');
   };

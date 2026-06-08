@@ -3,7 +3,7 @@ import { Cpu, Code, Briefcase, MessageSquare, Mail, Phone, MapPin } from 'lucide
 
 const team = [
   { 
-    name: "Hary Kim's", 
+    name: 'Hary Kims', 
     role: 'Business Owner', 
     icon: <Briefcase className="w-12 h-12 text-primary" />,
     description: 'Leading the vision of Harykim\'s Intertech with a focus on quality and customer satisfaction.'

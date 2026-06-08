@@ -9,11 +9,19 @@ function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email) {
-      toast.success('Password reset link sent to your email!');
-      setSubmitted(true);
+      setIsLoading(true);
+      
+      // Simulate API call and email sending
+      setTimeout(() => {
+        setIsLoading(false);
+        setSubmitted(true);
+        toast.success(`Reset link sent successfully to ${email}`);
+      }, 1500);
     }
   };
 
@@ -27,7 +35,7 @@ function ForgotPassword() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary">Reset Password</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Enter your email to receive a reset link
+            Enter the email you registered with to receive a reset link
           </p>
         </div>
 
@@ -42,7 +50,7 @@ function ForgotPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700"
-                  placeholder="john@example.com"
+                  placeholder="hkintertech22@gmail.com"
                   required
                 />
               </div>
@@ -50,18 +58,22 @@ function ForgotPassword() {
 
             <button
               type="submit"
-              className="w-full bg-primary text-white py-2 rounded-lg font-semibold hover:bg-primary/90 flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className={`w-full bg-primary text-white py-2 rounded-lg font-semibold hover:bg-primary/90 flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              <Send size={18} />
-              Send Reset Link
+              <Send size={18} className={isLoading ? 'animate-bounce' : ''} />
+              {isLoading ? 'Sending Link...' : 'Send Reset Link'}
             </button>
           </form>
         ) : (
           <div className="text-center">
-            <div className="bg-green-100 text-green-700 p-4 rounded-lg mb-6">
-              Password reset link sent to {email}
+            <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-xl mb-6 border border-green-200 dark:border-green-800">
+              <p className="font-semibold">Check your inbox!</p>
+              <p className="text-sm mt-1">We've sent a password reset link to:</p>
+              <p className="font-mono mt-2 text-primary">{email}</p>
             </div>
-            <Link to="/login" className="text-primary hover:underline">
+            <p className="text-sm text-gray-500 mb-6">If you don't see the email, check your spam folder.</p>
+            <Link to="/login" className="bg-primary text-white px-6 py-2 rounded-lg inline-block hover:bg-primary/90 transition-colors">
               Back to Login
             </Link>
           </div>
