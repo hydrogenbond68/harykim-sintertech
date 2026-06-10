@@ -9,7 +9,7 @@ export const mockCategories = [
 ];
 
 export const mockBrands = [
-  'Apple', 'Samsung', 'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Microsoft', 'Logitech', 'Corsair', 'Kingston', 'TP-Link'
+  'Apple', 'Samsung', 'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Microsoft', 'Logitech', 'Corsair', 'Kingston', 'TP-Link', 'Oraimo'
 ];
 
 export const mockUsers = [

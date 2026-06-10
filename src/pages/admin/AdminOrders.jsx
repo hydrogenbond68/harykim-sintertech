@@ -1,8 +1,9 @@
 // src/pages/admin/AdminOrders.jsx
 import { useState } from 'react';
-import { Search, Package, CheckCircle } from 'lucide-react';
+import { Search, Package, CheckCircle, Trash2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { toast } from 'react-toastify';
+import { formatPrice } from '../../utils/formatters';
 
 function AdminOrders() {
   const { orders, dispatch } = useStore();
@@ -21,6 +22,13 @@ function AdminOrders() {
   const updateOrderStatus = (orderId, newStatus) => {
     dispatch({ type: 'UPDATE_ORDER_STATUS', payload: { orderId, status: newStatus } });
     toast.success(`Order ${orderId} status updated to ${newStatus}`);
+  };
+
+  const deleteOrder = (orderId) => {
+    if (window.confirm('Are you sure you want to delete this order?')) {
+      dispatch({ type: 'SET_ORDERS', payload: orders.filter(o => o.id !== orderId) });
+      toast.success('Order deleted successfully');
+    }
   };
 
   const getStatusColor = (status) => {
@@ -45,7 +53,7 @@ function AdminOrders() {
             placeholder="Search orders..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
         </div>
         <div className="flex gap-2">
@@ -79,10 +87,19 @@ function AdminOrders() {
                   <p className="text-sm text-gray-500">{order.email} • {order.phone}</p>
                 </div>
                 <div className="flex flex-col items-end gap-2 mt-3 md:mt-0">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
-                    {order.status}
-                  </span>
-                  <p className="text-xl font-bold text-primary">${order.total?.toFixed(2)}</p>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
+                      {order.status}
+                    </span>
+                    <button
+                      onClick={() => deleteOrder(order.id)}
+                      className="p-1 text-red-500 hover:bg-red-50 rounded-lg"
+                      title="Delete Order"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  <p className="text-xl font-bold text-primary">{formatPrice(order.total)}</p>
                 </div>
               </div>
 
@@ -92,7 +109,7 @@ function AdminOrders() {
                   {order.items?.map(item => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} x {item.quantity}</span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      <span>{formatPrice(item.price * item.quantity)}</span>
                     </div>
                   ))}
                 </div>

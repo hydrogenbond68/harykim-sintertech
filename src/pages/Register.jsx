@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Phone, MapPin } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 function Register() {
   const navigate = useNavigate();
-  const { register } = useStore();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,13 +25,15 @@ function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
     // eslint-disable-next-line no-unused-vars
     const { confirmPassword, ...userData } = formData;
-    register(userData);
-    navigate('/');
+    const result = register(userData);
+    if (result.success) {
+      navigate('/');
+    }
   };
 
   return (

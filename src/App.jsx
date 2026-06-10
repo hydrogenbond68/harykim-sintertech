@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { StoreProvider } from './context/StoreContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
@@ -29,72 +31,63 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminOrders from './pages/admin/AdminOrders';
 
-// Scroll to top wrapper
-const ScrollToTop = ({ children }) => {
+// Global Scroll to Top Component
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-  return children;
+  }, [pathname]);
+
+  return null;
 };
 
 function App() {
   return (
     <ThemeProvider>
-      <StoreProvider>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
-        <Routes>
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProducts />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="reviews" element={<AdminReviews />} />
-            <Route path="orders" element={<AdminOrders />} />
-          </Route>
+      <AuthProvider>
+        <StoreProvider>
+          <ScrollToTop />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            theme="colored"
+          />
+          <Routes>
+            {/* Admin Routes */}
+            <Route path="/admin" element={
+              <ProtectedRoute adminOnly>
+                <AdminLayout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="reviews" element={<AdminReviews />} />
+              <Route path="orders" element={<AdminOrders />} />
+            </Route>
 
-          {/* Public Routes */}
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={
-              <ScrollToTop>
-                <Home />
-              </ScrollToTop>
-            } />
-            <Route path="shop" element={
-              <ScrollToTop>
-                <Shop />
-              </ScrollToTop>
-            } />
-            <Route path="product/:id" element={
-              <ScrollToTop>
-                <ProductDetails />
-              </ScrollToTop>
-            } />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="dashboard" element={<UserDashboard />} />
-            <Route path="about" element={
-              <ScrollToTop>
-                <About />
-              </ScrollToTop>
-            } />
-          </Route>
-        </Routes>
-      </StoreProvider>
+            {/* Public Routes */}
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="shop" element={<Shop />} />
+              <Route path="product/:id" element={<ProductDetails />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+              <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="dashboard" element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="about" element={<About />} />
+            </Route>
+          </Routes>
+        </StoreProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

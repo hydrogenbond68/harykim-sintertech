@@ -51,19 +51,23 @@ const categories = [
 ];
 
 const testimonials = [
-  { id: 1, name: 'Michael Otieno', role: 'IT Manager', rating: 5, comment: 'Best tech store in Kenya! Got my MacBook at an amazing price.', avatar: 'https://randomuser.me/api/portraits/men/1.jpg' },
-  { id: 2, name: 'Sarah Wanjiku', role: 'Software Engineer', rating: 5, comment: 'Fast delivery and genuine products. Highly recommend!', avatar: 'https://randomuser.me/api/portraits/women/1.jpg' },
-  { id: 3, name: 'James Mwangi', role: 'Business Owner', rating: 4, comment: 'Great customer service and quality products.', avatar: 'https://randomuser.me/api/portraits/men/2.jpg' },
+  { id: 1, name: 'Michael Otieno', role: 'IT Manager', rating: 5, comment: 'Best tech store in Kenya! Got my MacBook at an amazing price.' },
+  { id: 2, name: 'Sarah Wanjiku', role: 'Software Engineer', rating: 5, comment: 'Fast delivery and genuine products. Highly recommend!' },
+  { id: 3, name: 'James Mwangi', role: 'Business Owner', rating: 4, comment: 'Great customer service and quality products.' },
 ];
 
 function Home() {
   const { products } = useStore();
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  const bestSellers = products.filter(p => p.isBestSeller).slice(0, 4);
-  const newArrivals = products.filter(p => p.isNew).slice(0, 4);
-  const trending = products.filter(p => p.isTrending).slice(0, 4);
-  const discounted = products.filter(p => p.discount > 15).slice(0, 4);
+  // Sort products by ID descending to get the newest ones first
+  const sortedProducts = [...products].sort((a, b) => b.id - a.id);
+  
+  // Create sections based on the sorted list
+  const latestProducts = sortedProducts.slice(0, 8); 
+  const bestSellers = sortedProducts.filter(p => p.isBestSeller).slice(0, 4);
+  const trending = sortedProducts.filter(p => p.isTrending).slice(0, 4);
+  const discounted = sortedProducts.filter(p => p.discount > 15).slice(0, 4);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -72,13 +76,26 @@ function Home() {
     return () => clearInterval(timer);
   }, []);
 
+  const getSpecColorClasses = (color) => {
+    switch (color) {
+      case 'blue': return 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30';
+      case 'purple': return 'bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/30';
+      case 'green': return 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30';
+      case 'orange': return 'bg-orange-500/10 hover:bg-orange-500/20 border-orange-500/30';
+      case 'indigo': return 'bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/30';
+      case 'red': return 'bg-red-500/10 hover:bg-red-500/20 border-red-500/30';
+      case 'pink': return 'bg-pink-500/10 hover:bg-pink-500/20 border-pink-500/30';
+      default: return 'bg-gray-500/10 hover:bg-gray-500/20 border-gray-500/30';
+    }
+  };
+
   return (
     <div className="overflow-hidden">
       {/* Hero Slider Section */}
       <section className="relative min-h-[85vh] flex items-center bg-gray-900 text-white overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentSlide}
+            key={String(currentSlide)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -141,7 +158,7 @@ function Home() {
               {/* Dynamic Specs Grid */}
               <div className="grid grid-cols-2 gap-4 md:gap-8 mb-12">
                 {heroSlides[currentSlide].specs.map((spec, idx) => (
-                  <div key={idx} className={`group bg-${spec.color}-500/10 hover:bg-${spec.color}-500/20 p-4 rounded-2xl border border-${spec.color}-500/30 transition-all duration-300`}>
+                  <div key={idx} className={`group p-4 rounded-2xl border transition-all duration-300 ${getSpecColorClasses(spec.color)}`}>
                     <div className="text-3xl mb-2 group-hover:scale-125 transition-transform">{spec.icon}</div>
                     <p className="font-bold text-lg">{spec.label}</p>
                   </div>
@@ -212,12 +229,18 @@ function Home() {
         </div>
       </section>
 
-      {/* New Arrivals */}
+      {/* Latest Products */}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="section-title">✨ New Arrivals</h2>
+          <div className="flex justify-between items-end mb-10">
+            <div>
+              <h2 className="text-3xl font-black mb-2">✨ Latest Tech Products</h2>
+              <p className="text-gray-600 dark:text-gray-400">Our newest additions to the store</p>
+            </div>
+            <Link to="/shop" className="text-primary font-bold hover:underline mb-2">View All Shop</Link>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newArrivals.map((product, idx) => (
+            {latestProducts.map((product, idx) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}

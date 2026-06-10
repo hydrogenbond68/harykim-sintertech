@@ -5,17 +5,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Heart, Menu, X, Moon, Sun, Search } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { cart, wishlist, user } = useStore();
+  const { cart, wishlist } = useStore();
+  const { user, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlist.length;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setMobileMenuOpen(false);
+  };
 
   const whatsappNumber = "+254118477340";
   const whatsappMessage = encodeURIComponent("Hello, I have an enquiry about your products.");
@@ -140,7 +148,14 @@ function Navbar() {
                     <span className="font-medium">{darkMode ? 'Dark' : 'Light'} Mode</span>
                   </button>
                 </div>
-                {!user && (
+                {user ? (
+                  <button 
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 bg-red-500 text-white px-4 py-3 rounded-lg text-center font-bold shadow-lg"
+                  >
+                    <span className="w-full text-center">Logout</span>
+                  </button>
+                ) : (
                   <Link to="/login" className="bg-primary text-white px-4 py-3 rounded-lg text-center font-bold shadow-lg" onClick={() => setMobileMenuOpen(false)}>
                     Login
                   </Link>

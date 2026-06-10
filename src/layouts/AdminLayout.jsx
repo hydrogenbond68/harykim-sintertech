@@ -15,12 +15,12 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { user, logout } = useStore();
+  const { user, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
@@ -36,11 +36,6 @@ function AdminLayout() {
     { path: '/admin/reviews', icon: Star, label: 'Reviews' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
   ];
-
-  if (!user || user.role !== 'admin') {
-    navigate('/login');
-    return null;
-  }
 
   return (
     <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">

@@ -222,7 +222,7 @@ function Shop() {
                 <AnimatePresence>
                   {filteredProducts.map((product, idx) => (
                     <motion.div
-                      key={product.id}
+                      key={String(product.id)}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}

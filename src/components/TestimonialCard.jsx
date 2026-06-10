@@ -5,7 +5,6 @@ function TestimonialCard({ testimonial }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
       <div className="flex items-center gap-4 mb-4">
-        <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full" />
         <div>
           <h4 className="font-semibold text-gray-800 dark:text-white">{testimonial.name}</h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>

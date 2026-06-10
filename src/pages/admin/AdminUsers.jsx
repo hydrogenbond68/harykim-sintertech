@@ -5,7 +5,7 @@ import { useStore } from '../../context/StoreContext';
 import { toast } from 'react-toastify';
 
 function AdminUsers() {
-  const { users, dispatch } = useStore();
+  const { users, toggleUserRole: storeToggleRole, dispatch } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredUsers = users.filter(u =>
@@ -18,8 +18,11 @@ function AdminUsers() {
     const updatedUsers = users.map(u =>
       u.id === userId ? { ...u, role: newRole } : u
     );
+    
+    // Centralized update via StoreContext dispatch
     dispatch({ type: 'SET_USERS', payload: updatedUsers });
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    
+    // AuthContext will pick this up via the linked effect if we add the dispatch to SET_USERS
     toast.success(`User role updated to ${newRole}`);
   };
 
@@ -28,6 +31,14 @@ function AdminUsers() {
       const updatedUsers = users.filter(u => u.id !== userId);
       dispatch({ type: 'SET_USERS', payload: updatedUsers });
       localStorage.setItem('users', JSON.stringify(updatedUsers));
+      
+      // If the admin deleted themselves (not recommended but possible in this mock setup)
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      if (currentUser && currentUser.id === userId) {
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+      
       toast.success('User deleted successfully');
     }
   };

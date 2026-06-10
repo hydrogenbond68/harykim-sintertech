@@ -1,6 +1,6 @@
 // src/pages/UserDashboard.jsx
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
 import { useTheme } from '../context/ThemeContext';
 import { User, Package, Heart, Settings, LogOut, Edit2, Check, Camera, Trash2 } from 'lucide-react';
@@ -8,7 +8,8 @@ import { formatPrice } from '../utils/formatters';
 import { toast } from 'react-toastify';
 
 function UserDashboard() {
-  const { user, orders, wishlist, logout, updateProfile } = useStore();
+  const { user, logout, updateAuthUser } = useAuth();
+  const { orders, wishlist } = useStore();
   const { darkMode, toggleDarkMode } = useTheme();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -28,19 +29,19 @@ function UserDashboard() {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        updateProfile({ avatar: reader.result });
+        updateAuthUser({ avatar: reader.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
   const removePhoto = () => {
-    updateProfile({ avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random` });
+    updateAuthUser({ avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random` });
     toast.info('Profile photo removed');
   };
 
   const handleProfileUpdate = () => {
-    updateProfile(profileData);
+    updateAuthUser(profileData);
     setIsEditing(false);
   };
 
@@ -50,10 +51,6 @@ function UserDashboard() {
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">

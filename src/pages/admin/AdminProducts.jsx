@@ -20,8 +20,11 @@ function AdminProducts() {
     description: '',
     stock: '',
     rating: 4.5,
-    images: ['', '', '', ''], // Ensure 4 slots
+    images: ['', '', '', ''],
     specs: {},
+    isNew: true,
+    isBestSeller: false,
+    isTrending: false,
   });
 
   const filteredProducts = products.filter(p =>
@@ -32,10 +35,15 @@ function AdminProducts() {
   const handleOpenModal = (product = null) => {
     if (product) {
       setEditingProduct(product);
-      // Ensure there are at least 4 image slots
-      const paddedImages = [...product.images];
+      const paddedImages = [...(product.images || [])];
       while (paddedImages.length < 4) paddedImages.push('');
-      setFormData({ ...product, images: paddedImages });
+      setFormData({ 
+        ...product, 
+        images: paddedImages,
+        isNew: product.isNew || false,
+        isBestSeller: product.isBestSeller || false,
+        isTrending: product.isTrending || false,
+      });
     } else {
       setEditingProduct(null);
       setFormData({
@@ -49,6 +57,9 @@ function AdminProducts() {
         rating: 4.5,
         images: ['', '', '', ''],
         specs: {},
+        isNew: true,
+        isBestSeller: false,
+        isTrending: false,
       });
     }
     setShowModal(true);
@@ -129,10 +140,9 @@ function AdminProducts() {
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th className="text-left py-3 px-4">Product</th>
-                <th className="text-left py-3 px-4">Brand</th>
-                <th className="text-left py-3 px-4">Category</th>
-                <th className="text-left py-3 px-4">Price</th>
-                <th className="text-left py-3 px-4">Stock</th>
+                <th className="text-left py-3 px-4">Brand/Category</th>
+                <th className="text-left py-3 px-4">Price/Stock</th>
+                <th className="text-left py-3 px-4">Status</th>
                 <th className="text-left py-3 px-4">Actions</th>
               </tr>
             </thead>
@@ -140,7 +150,7 @@ function AdminProducts() {
               <AnimatePresence>
                 {filteredProducts.map(product => (
                   <motion.tr
-                    key={product.id}
+                    key={String(product.id)}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -149,16 +159,33 @@ function AdminProducts() {
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <img src={product.images[0]} alt={product.name} className="w-10 h-10 object-cover rounded" />
-                        <span className="font-medium">{product.name}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{product.name}</span>
+                          <span className="text-xs text-gray-500">ID: {product.id}</span>
+                        </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">{product.brand}</td>
-                    <td className="py-3 px-4">{product.category}</td>
-                    <td className="py-3 px-4">{formatPrice(product.price)}</td>
                     <td className="py-3 px-4">
-                      <span className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
-                        {product.stock}
-                      </span>
+                      <div className="text-sm">
+                        <p className="font-semibold">{product.brand}</p>
+                        <p className="text-gray-500">{product.category}</p>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="text-sm">
+                        <p className="font-bold text-primary">{formatPrice(product.price)}</p>
+                        <p className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
+                          Stock: {product.stock}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex flex-wrap gap-1">
+                        {product.isNew && <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">New</span>}
+                        {product.isBestSeller && <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Best</span>}
+                        {product.isTrending && <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Trend</span>}
+                        {!product.isNew && !product.isBestSeller && !product.isTrending && <span className="text-gray-400 text-xs italic">Normal</span>}
+                      </div>
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
@@ -284,6 +311,38 @@ function AdminProducts() {
                   required
                 />
               </div>
+
+              {/* Product Flags */}
+              <div className="flex flex-wrap gap-6 py-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isNew}
+                    onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })}
+                    className="w-4 h-4 text-primary rounded focus:ring-primary"
+                  />
+                  <span className="text-sm font-medium">New Arrival</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isBestSeller}
+                    onChange={(e) => setFormData({ ...formData, isBestSeller: e.target.checked })}
+                    className="w-4 h-4 text-primary rounded focus:ring-primary"
+                  />
+                  <span className="text-sm font-medium">Best Seller</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isTrending}
+                    onChange={(e) => setFormData({ ...formData, isTrending: e.target.checked })}
+                    className="w-4 h-4 text-primary rounded focus:ring-primary"
+                  />
+                  <span className="text-sm font-medium">Trending</span>
+                </label>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-2">Product Images (4 different views)</label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

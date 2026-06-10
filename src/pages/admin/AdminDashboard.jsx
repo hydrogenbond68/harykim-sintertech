@@ -5,7 +5,11 @@ import { useStore } from '../../context/StoreContext';
 import { formatPrice } from '../../utils/formatters';
 
 function AdminDashboard() {
-  const { products, users, orders, reviews } = useStore();
+  const store = useStore();
+  const products = store?.products || [];
+  const users = store?.users || [];
+  const orders = store?.orders || [];
+  const reviews = store?.reviews || [];
 
   const stats = [
     { title: 'Total Users', value: users.length, icon: Users, color: 'bg-blue-500' },

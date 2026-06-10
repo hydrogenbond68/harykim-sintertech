@@ -1,6 +1,7 @@
 // src/context/StoreContext.jsx
 import { createContext, useContext, useReducer, useEffect } from 'react';
 import { mockProducts, mockCategories, mockBrands, mockUsers, mockReviews } from '../data/productsData';
+import { useAuth } from './AuthContext';
 import { toast } from 'react-toastify';
 
 const StoreContext = createContext();
@@ -11,15 +12,17 @@ const initialState = {
   brands: [],
   cart: [],
   wishlist: [],
-  user: null,
   users: [],
   reviews: [],
   orders: [],
   loading: false,
+  isInitialized: false,
 };
 
 function appReducer(state, action) {
   switch (action.type) {
+    case 'SET_INITIALIZED':
+      return { ...state, isInitialized: true };
     case 'SET_LOADING':
       return { ...state, loading: action.payload };
     case 'SET_PRODUCTS':
@@ -100,10 +103,6 @@ function appReducer(state, action) {
         wishlist: [...state.wishlist, action.payload],
       };
     }
-    case 'SET_USER':
-      return { ...state, user: action.payload };
-    case 'LOGOUT':
-      return { ...state, user: null, cart: [], wishlist: [] };
     case 'ADD_ORDER':
       return { ...state, orders: [action.payload, ...state.orders] };
     case 'UPDATE_ORDER_STATUS':
@@ -138,52 +137,73 @@ function appReducer(state, action) {
 
 export function StoreProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const { setOnUserChange } = useAuth();
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
-    const storedWishlist = localStorage.getItem('wishlist');
-    const storedUser = localStorage.getItem('user');
-    const storedOrders = localStorage.getItem('orders');
+    const safeParse = (key, fallback) => {
+      try {
+        const item = localStorage.getItem(key);
+        if (!item || item === 'undefined' || item === 'null') return fallback;
+        const parsed = JSON.parse(item);
+        return Array.isArray(fallback) && !Array.isArray(parsed) ? fallback : parsed;
+      } catch (e) {
+        console.error(`Error parsing localStorage key "${key}":`, e);
+        return fallback;
+      }
+    };
 
-    if (storedCart) {
-      dispatch({ type: 'SET_CART', payload: JSON.parse(storedCart) });
-    }
-    if (storedWishlist) {
-      dispatch({ type: 'SET_WISHLIST', payload: JSON.parse(storedWishlist) });
-    }
-    if (storedUser) {
-      dispatch({ type: 'SET_USER', payload: JSON.parse(storedUser) });
-    }
-    if (storedOrders) {
-      dispatch({ type: 'SET_ORDERS', payload: JSON.parse(storedOrders) });
-    }
+    const storedCart = safeParse('cart', []);
+    const storedWishlist = safeParse('wishlist', []);
+    const storedOrders = safeParse('orders', []);
+    const storedUsers = safeParse('users', mockUsers);
+    const storedProducts = safeParse('products', mockProducts);
+    const storedReviews = safeParse('reviews', mockReviews);
 
-    const storedUsers = localStorage.getItem('users');
-    if (storedUsers) {
-      dispatch({ type: 'SET_USERS', payload: JSON.parse(storedUsers) });
-    } else {
-      dispatch({ type: 'SET_USERS', payload: mockUsers });
-    }
+    dispatch({ type: 'SET_CART', payload: storedCart });
+    dispatch({ type: 'SET_WISHLIST', payload: storedWishlist });
+    dispatch({ type: 'SET_ORDERS', payload: storedOrders });
+    dispatch({ type: 'SET_USERS', payload: storedUsers });
+    dispatch({ type: 'SET_PRODUCTS', payload: storedProducts });
+    dispatch({ type: 'SET_REVIEWS', payload: storedReviews });
 
-    dispatch({ type: 'SET_PRODUCTS', payload: mockProducts });
     dispatch({ type: 'SET_CATEGORIES', payload: mockCategories });
     dispatch({ type: 'SET_BRANDS', payload: mockBrands });
-    dispatch({ type: 'SET_REVIEWS', payload: mockReviews });
+    dispatch({ type: 'SET_INITIALIZED' });
   }, []);
+
+  // Link AuthContext changes to StoreContext
+  useEffect(() => {
+    if (setOnUserChange) {
+      setOnUserChange((updatedUsers) => {
+        if (updatedUsers && Array.isArray(updatedUsers)) {
+          dispatch({ type: 'SET_USERS', payload: updatedUsers });
+        }
+      });
+    }
+  }, [setOnUserChange]);
 
   // Save to localStorage on state changes
   useEffect(() => {
+    if (!state.isInitialized) return;
+    
     localStorage.setItem('cart', JSON.stringify(state.cart));
     localStorage.setItem('wishlist', JSON.stringify(state.wishlist));
-    if (state.user) localStorage.setItem('user', JSON.stringify(state.user));
-    else localStorage.removeItem('user');
     localStorage.setItem('orders', JSON.stringify(state.orders));
     localStorage.setItem('users', JSON.stringify(state.users));
-  }, [state.cart, state.wishlist, state.user, state.orders, state.users]);
+    localStorage.setItem('products', JSON.stringify(state.products));
+    localStorage.setItem('reviews', JSON.stringify(state.reviews));
+  }, [state.cart, state.wishlist, state.orders, state.users, state.products, state.reviews, state.isInitialized]);
 
   const addToCart = (product, quantity = 1) => {
-    dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
+    // Check stock
+    const currentProduct = state.products.find(p => p.id === product.id);
+    if (!currentProduct || currentProduct.stock < quantity) {
+      toast.error('Not enough stock available');
+      return;
+    }
+
+    dispatch({ type: 'ADD_TO_CART', payload: { ...product, quantity } });
     toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart!`);
   };
 
@@ -194,6 +214,14 @@ export function StoreProvider({ children }) {
 
   const updateQuantity = (productId, quantity) => {
     if (quantity < 1) return;
+    
+    // Check stock
+    const product = state.products.find(p => p.id === productId);
+    if (product && quantity > product.stock) {
+      toast.error(`Only ${product.stock} units available`);
+      return;
+    }
+
     dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { id: productId, quantity } });
   };
 
@@ -201,59 +229,15 @@ export function StoreProvider({ children }) {
     dispatch({ type: 'TOGGLE_WISHLIST', payload: product });
   };
 
-  const login = (email, password) => {
-    // Check in the current users state (which includes mock data and new registrations)
-    const user = state.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+  const toggleUserRole = (userId, currentRole) => {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    const updatedUsers = state.users.map(u =>
+      u.id === userId ? { ...u, role: newRole } : u
+    );
     
-    if (user) {
-      // eslint-disable-next-line no-unused-vars
-      const { password: _, ...userWithoutPassword } = user;
-      dispatch({ type: 'SET_USER', payload: userWithoutPassword });
-      toast.success(`Welcome back, ${userWithoutPassword.name}!`);
-      return true;
-    }
-    toast.error('Invalid email or password');
-    return false;
-  };
-
-  const register = (userData) => {
-    const newUser = {
-      id: Date.now(),
-      ...userData,
-      role: 'user',
-      avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`,
-      createdAt: new Date().toISOString(),
-    };
-    
-    // Check if user already exists
-    if (state.users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
-      toast.error('Email already registered');
-      return false;
-    }
-
-    dispatch({ type: 'ADD_USER', payload: newUser });
-    // eslint-disable-next-line no-unused-vars
-    const { password: _, ...userWithoutPassword } = newUser;
-    dispatch({ type: 'SET_USER', payload: userWithoutPassword });
-    toast.success('Registration successful!');
-    return true;
-  };
-
-  const logout = () => {
-    dispatch({ type: 'LOGOUT' });
-    localStorage.removeItem('user'); // Explicitly remove from storage
-    toast.info('Logged out successfully');
-  };
-
-  const updateProfile = (userData) => {
-    const updatedUser = { ...state.user, ...userData };
-    dispatch({ type: 'SET_USER', payload: updatedUser });
-    
-    // Update users list as well
-    const updatedUsers = state.users.map(u => u.id === updatedUser.id ? updatedUser : u);
     dispatch({ type: 'SET_USERS', payload: updatedUsers });
     
-    toast.success('Profile updated successfully!');
+    toast.success(`User role updated to ${newRole}`);
   };
 
   const placeOrder = (orderData) => {
@@ -265,6 +249,17 @@ export function StoreProvider({ children }) {
       status: 'pending',
       createdAt: new Date().toISOString(),
     };
+
+    // Decrease stock for each item in the cart
+    const updatedProducts = state.products.map(product => {
+      const cartItem = state.cart.find(item => item.id === product.id);
+      if (cartItem) {
+        return { ...product, stock: Math.max(0, product.stock - cartItem.quantity) };
+      }
+      return product;
+    });
+
+    dispatch({ type: 'SET_PRODUCTS', payload: updatedProducts });
     dispatch({ type: 'ADD_ORDER', payload: newOrder });
     dispatch({ type: 'CLEAR_CART' });
     toast.success('Order placed successfully!');
@@ -293,32 +288,36 @@ export function StoreProvider({ children }) {
     toast.success('Review added');
   };
 
+  const approveReview = (reviewId) => {
+    const updatedReviews = state.reviews.map(review =>
+      review.id === reviewId ? { ...review, status: 'approved' } : review
+    );
+    dispatch({ type: 'SET_REVIEWS', payload: updatedReviews });
+    toast.success('Review approved');
+  };
+
   const deleteReview = (reviewId) => {
     dispatch({ type: 'DELETE_REVIEW', payload: reviewId });
     toast.success('Review deleted');
   };
 
   return (
-    <StoreContext.Provider
-      value={{
-        ...state,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        toggleWishlist,
-        login,
-        register,
-        logout,
-        updateProfile,
-        placeOrder,
-        addProduct,
-        updateProduct,
-        deleteProduct,
-        addReview,
-        deleteReview,
-        dispatch,
-      }}
-    >
+    <StoreContext.Provider value={{
+      ...state,
+      dispatch,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      toggleWishlist,
+      toggleUserRole,
+      placeOrder,
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      addReview,
+      approveReview,
+      deleteReview
+    }}>
       {children}
     </StoreContext.Provider>
   );
